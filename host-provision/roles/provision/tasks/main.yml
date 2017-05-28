@@ -1,0 +1,43 @@
+---
+# tasks file for provision
+
+- name: installing epel release
+  yum: 
+    name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm 
+    state: present
+  become: yes
+
+- name: updatingg the repositories
+  yum:
+    name: '*'
+    state: latest
+  become: yes
+
+- name: installing java
+  yum: name=java state=latest 
+  become: yes
+  ignore_errors: yes 
+
+- name: installing nc 
+  yum: name=nc state=latest
+  become: yes
+  ignore_errors: yes
+
+- name: installing nslookup and bindtools
+  yum: name=bind-utils state=present
+  become: yes 
+
+- name: List ansible packages and register result to print with debug later.
+  yum:
+    list: ansible
+  register: res
+  become: yes
+  tags: result 
+
+- name: uptime 
+  shell: uptime
+  register: res2
+  tags: result
+
+- debug: var=res2.stdout_lines
+  tags: result

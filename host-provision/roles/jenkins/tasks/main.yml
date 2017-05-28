@@ -1,0 +1,51 @@
+---
+# tasks file for jenkins
+
+- name: installing wget 
+  yum: 
+    name: wget
+    state: present
+  become: yes 
+
+- name: fetching repo from the repository 
+  shell: sudo wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat/jenkins.repo
+
+- name: importing the jenkins key 
+  shell: sudo rpm --import https://jenkins-ci.org/redhat/jenkins-ci.org.key 
+
+- name: installing jenkins 
+  yum: 
+    name: jenkins
+    state: present
+  become: yes 
+
+- name: making sure jenkins service is started 
+  service: 
+    name: jenkins
+    state: started 
+  become: yes
+
+- name: fetching admin password for jenkins
+  shell: cat /var/lib/jenkins/secrets/initialAdminPassword
+  become: yes 
+  register: pasword 
+
+- name: displaying password 
+  debug: var=pasword.stdout_lines 
+
+- name: changing the conf file to run on specific port 
+  template: 
+    src: jenkins.j2
+    dest: /etc/sysconfig/jenkins
+  become: yes 
+
+
+- name: restarting jenkins 
+  service: 
+    name: jenkins 
+    state: restarted 
+  become: yes 
+
+
+
+      

@@ -1,0 +1,16 @@
+---
+
+- name: Gather facts for all hosts
+  hosts: all
+  gather_facts: false
+  roles:
+    - provision
+
+
+- name: Gather facts for all hosts
+  hosts: jenkins
+  gather_facts: false
+  roles:
+    - jenkins
+  tags: jenkins
+
